@@ -4,6 +4,7 @@ from re import search
 import discord
 import os
 import scripts as s
+from majors import major_abbrev
 
 load_dotenv
 GUILD = os.getenv('DISCORD_GUILD')
@@ -16,12 +17,15 @@ class Classes(commands.Cog):
 
     @commands.command(help='Select your major as a server role.\nExample: $major Computer Science\n\n' \
                            'To view a list of supported majors, ' \
-                           'use the command with 0 arguments\nExample: $major',
+                           'use the command with 0 arguments\nExample: $major\n\n' \
+                           'For some majors you may also use their abbreviation code\nExample: $major AAAS',
                       brief='Select your major as a server role.')
     async def major(self, ctx, *major):
         guild = discord.utils.get(self.bot.guilds, name=GUILD)
         roles = await guild.fetch_roles()
         major = ' '.join(major).lower()
+        if major.upper() in major_abbrev:
+            major = major_abbrev[major.upper()].lower()
         selected_role = [i for i in roles if i.name.lower() == major]
         if len(selected_role) == 0:
             if major:
@@ -191,19 +195,20 @@ class Utility(commands.Cog):
             else:
                 for line in returned:
                     await ctx.send(line)
+    
+    @commands.command(help='Provides a brief synopsis of BUSTER, including a link to his Open Source code',
+                      brief='Provides a brief synopsis of BUSTER')
+    async def info(self, ctx):
+        await ctx.send(f'Hello! I am BUSTER, your friendly automation bot!\n' \
+                       f'I was developed by WMU students, and am hosted locally in Kalamazoo!\n' \
+                       f'If you want to know me more intimately my Open Source code can be found here:' \
+                       f'\n\nhttps://github.com/vscheff/BUSTER')
                     
     @commands.command(hidden=True)
     async def ready(self, ctx):
         await ctx.send(f'Websocket closed: {self.bot.is_closed()}\n' \
                        f'Internal cache ready: {self.bot.is_ready()}\n' \
                        f'Websocket rate limited: {self.bot.is_ws_ratelimited()}')
-    
-    @commands.command(hidden=True)
-    async def clear(self, ctx):
-        self.bot.clear()
-        await ctx.send(f'Internal state cleared')
-        await self.ready(ctx)
-
 
 class Random(commands.Cog):
     @commands.command(help='Returns either "heads" or "tails"\nExample: $flip',
