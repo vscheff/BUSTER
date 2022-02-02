@@ -12,10 +12,10 @@ GUILD = os.getenv('DISCORD_GUILD')
 class Classes(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.not_majors = ['Admin', 'WMU_Bot']
+        self.not_majors = ['Admin', 'WMU_Buster_Clone_Bot', 'Cool-Teacher']
 
     @commands.command(help='Select your major as a server role.\nExample: $major Computer Science\n\n' \
-                           'To view a list of supported majors,' \
+                           'To view a list of supported majors, ' \
                            'use the command with 0 arguments\nExample: $major',
                       brief='Select your major as a server role.')
     async def major(self, ctx, *major):
@@ -25,9 +25,11 @@ class Classes(commands.Cog):
         selected_role = [i for i in roles if i.name.lower() == major]
         if len(selected_role) == 0:
             if major:
-                await ctx.send(f'Invald major!')
-            role_list = '\n'.join(sorted([i.name for i in roles[1:] if i.name not in self.not_majors]))
-            await ctx.send(f'Supported majors include:\n{role_list}')
+                await ctx.send(f'Invald major! Please be sure to type your major exactly as it appears.')
+            await ctx.send(content=f'Supported majors include:\n', file=discord.File(r'./message.txt', filename='Majors.txt'))
+            return
+        if selected_role[0].name in self.not_majors:
+            await ctx.send('Sorry, that role is unavailable for assigment. Please type a valid major.')
             return
         await ctx.send(f'Success! You are now a member of {selected_role[0].name}!')
         await ctx.author.add_roles(selected_role[0])
