@@ -70,6 +70,9 @@ class Classes(commands.Cog):
     @commands.command(help='Join the text channel for a specified class.\nExample: $join CS1120',
                       brief='Join the text channel for a specified class.')
     async def join(self, ctx, class_name, class_number=None):
+        if class_name == 'help':
+            await ctx.send(self.join.help)
+            return
         guild = discord.utils.get(self.bot.guilds, name=GUILD)
         class_info = await self.validate_class(ctx, class_name, class_number)
         if class_info is None:
@@ -107,6 +110,9 @@ class Classes(commands.Cog):
     @commands.command(help='Leave the text channel for a specified class.\nExample: $leave CS1120',
                       brief='Leave the text channel for a specified class.')
     async def leave(self, ctx, class_name, class_number=None):
+        if class_name == 'help':
+            await ctx.send(self.leave.help)
+            return
         guild = discord.utils.get(self.bot.guilds, name=GUILD)
         class_info = await self.validate_class(ctx, class_name, class_number)
         if class_info is None:
