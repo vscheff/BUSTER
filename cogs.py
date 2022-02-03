@@ -24,6 +24,9 @@ class Classes(commands.Cog):
         guild = discord.utils.get(self.bot.guilds, name=GUILD)
         roles = await guild.fetch_roles()
         major = ' '.join(major).lower()
+        if major == 'help':
+            await ctx.send(self.major.help)
+            return
         if major.upper() in major_abbrev:
             major = major_abbrev[major.upper()].lower()
         selected_role = [i for i in roles if i.name.lower() == major]
