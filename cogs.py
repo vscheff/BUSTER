@@ -41,7 +41,6 @@ class Classes(commands.Cog):
         await ctx.send(f'Success! You are now a member of {selected_role[0].name}!')
         await ctx.author.add_roles(selected_role[0])
 
-
     async def validate_class(self, ctx, class_name):
         match = search(r'\A\D+', class_name)
         if match is None:
@@ -213,6 +212,12 @@ class Classes(commands.Cog):
 class Utility(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+    
+    @commands.command(help='Returns an invite link and QR code for inviting new users to the server',
+                      brief='Returns an invite link for the server')
+    async def invite(self, ctx):
+        await ctx.send(content='Invite link: https://discord.gg/kfPrgSuHA6\n\n', 
+                       file=discord.File(r'./qr.png'))
 
     @commands.command(help='Returns "pong" if the bot is online.\nExample: $ping',
                       brief='Returns "pong" if the bot is online.')
