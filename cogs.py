@@ -13,7 +13,7 @@ GUILD = os.getenv('DISCORD_GUILD')
 class Classes(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.not_majors = ['Admin', 'WMU_Buster_Clone_Bot', 'Cool-Teacher']
+        self.not_majors = ['Admin', 'WMU_Buster_Clone_Bot', 'Professor']
 
     @commands.command(help='Select your major as a server role.\nExample: $major Computer Science\n\n' \
                            'To view a list of supported majors, ' \
@@ -23,7 +23,7 @@ class Classes(commands.Cog):
     async def major(self, ctx, *major):
         guild = discord.utils.get(self.bot.guilds, name=GUILD)
         roles = await guild.fetch_roles()
-        major = ' '.join(major).lower()
+        major = sub(r"'", '', ' '.join(major).lower())
         if major == 'help':
             await ctx.send(self.major.help)
             return
@@ -33,7 +33,7 @@ class Classes(commands.Cog):
         if len(selected_role) == 0:
             if major:
                 await ctx.send(f'Invald major! Please be sure to type your major exactly as it appears.')
-            await ctx.send(content=f'Supported majors include:\n', file=discord.File(r'./message.txt', filename='Majors.txt'))
+            await ctx.send(content=f'Supported majors include:\n', file=discord.File('./message.txt', filename='Majors.txt'))
             return
         if selected_role[0].name in self.not_majors:
             await ctx.send('Sorry, that role is unavailable for assigment. Please type a valid major.')
@@ -216,8 +216,8 @@ class Utility(commands.Cog):
     @commands.command(help='Returns an invite link and QR code for inviting new users to the server',
                       brief='Returns an invite link for the server')
     async def invite(self, ctx):
-        await ctx.send(content='Invite link: https://discord.gg/kfPrgSuHA6\n\n', 
-                       file=discord.File(r'./qr.png'))
+        await ctx.send(content='Invite link: https://discord.gg/kfPrgSuHA6', 
+                       file=discord.File('./qr.png'))
 
     @commands.command(help='Returns "pong" if the bot is online.\nExample: $ping',
                       brief='Returns "pong" if the bot is online.')

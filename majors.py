@@ -16,7 +16,7 @@ major_abbrev = {
 	"FCS": "Family and Consumer Sciences Teacher Education",
 	"FIN": "Finance",
 	"FREN": "French",
-	"GWS": "Gender and Women's Studies",
+	"GWS": "Gender and Womens Studies",
 	"GEOG": "Geography",
 	"GER": "German",
 	"GIST": "Global and International Studies",
