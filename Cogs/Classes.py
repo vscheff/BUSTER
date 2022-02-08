@@ -23,8 +23,6 @@ class Classes(commands.Cog):
                            'For some majors you may also use their abbreviation code\nExample: $major AAAS',
                       brief='Select your major as a server role.')
     async def major(self, ctx, *major):
-        guild = discord.utils.get(self.bot.guilds, name=GUILD)
-        roles = await guild.fetch_roles()
         major = sub(r"'", '', ' '.join(major).lower())
         if major == 'help':
             await ctx.send(self.major.help)
@@ -32,13 +30,16 @@ class Classes(commands.Cog):
         if major.upper() in major_abbrev:
             major = major_abbrev[major.upper()].lower()
         elif major not in self.major_list:
-            await ctx.send('Invalid major! Please be sure to type your major exactly as it appears.')
-            await ctx.send(content=f'Supported majors include:\n', 
+            if major:
+                await ctx.send('Invalid major! Please be sure to type your major exactly as it appears.\n')
+            await ctx.send(content='Supported majors include:',
                            file=discord.File('./message.txt', filename='Majors.txt'))
-            return
+            return        
+        guild = discord.utils.get(self.bot.guilds, name=GUILD)
+        roles = await guild.fetch_roles()
         selected_role = [i for i in roles if i.name.lower() == major][0]
-        await ctx.send(f'Success! You are now a member of {selected_role.name}!')
         await ctx.author.add_roles(selected_role)
+        await ctx.send(f'Success! You are now a member of {selected_role.name}!')
 
     async def validate_class(self, ctx, class_name):
         match = search(r'\A\D+', class_name)
@@ -65,8 +66,8 @@ class Classes(commands.Cog):
             return
         return department, class_number
 
-    @commands.command(help='Join the text channel for a specified class.\nExample: $join CS1120\n\n' \
-                           'You may also type several classes at once in a comma-separated list.\n' \
+    @commands.command(help='Join the text channel for a specified class.\nExample: $join CS1120\n\n'
+                           'You may also join several classes at once by using a comma-separated list.\n'
                            'Example: $join cs1120, MATH 2240, phys-2130',
                       brief='Join the text channel for a specified class.')
     async def join(self, ctx, *, arg):
@@ -117,9 +118,9 @@ class Classes(commands.Cog):
         else:
             print(f'$join command failed with error:\n\n{error}')
 
-    @commands.command(help='Leave the text channel for a specified class.\nExample: $leave CS1120\n\n' \
-                           'You may also type several classes at once in a comma-separated list.\n' \
-                           'Example: $leave cs1120, math 2240, phys-2130',
+    @commands.command(help='Leave the text channel for a specified class.\nExample: $leave CS1120\n\n'
+                           'You may also leave several classes at once by using a comma-separated list.\n'
+                           'Example: $leave cs1120, math 2240, PHYS-2130',
                       brief='Leave the text channel for a specified class.')
     async def leave(self, ctx, *, arg):
         arg = arg.strip().lower()
@@ -176,6 +177,7 @@ class Classes(commands.Cog):
                         await guild.create_role(name=name, colour=color)
                         count_success += 1
                     else:
+                        print('Skipping redundant role: {name}')
                         count_failure += 1
                 await ctx.send(f'Operation complete\n' \
                                f'Total Roles Added: {count_success}\n' \
@@ -189,13 +191,4 @@ class Classes(commands.Cog):
             print(f'$add_roles command failed: User {ctx.author.name} lacks permissions')
         else:
             print(f'$add_roles command failed with error:\n\n{error}')
-    
-    @commands.command(hidden=True)
-    @commands.has_permissions(manage_roles=True)
-    async def delete_roles(self, ctx):
-        guild = discord.utils.get(self.bot.guilds, name=GUILD)
-        role_objects = await guild.fetch_roles()
-        for role in role_objects[1:]:
-            if role.name not in ['Admin', 'WMU_Bot']:
-                print(f'Deleting role {role.name}')
-                await role.delete()
+
