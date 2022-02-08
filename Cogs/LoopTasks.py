@@ -22,7 +22,7 @@ class LoopTasks(commands.Cog):
     @tasks.loop(hours=24)
     async def purge_channels(self):
         print(f'Beginning default channel purge #{self.purge_channels.current_loop}:')
-        del_before = datetime.now() - timedelta(hours=76)
+        del_before = datetime.now() - timedelta(hours=72)
         print(f'Deleting messages before {del_before}')
         for channel in (self.ch_welcome, self.ch_roleClaim):
             await self.delete_messages(channel, del_before)
@@ -34,8 +34,8 @@ class LoopTasks(commands.Cog):
         
     @purge_channels.before_loop
     async def before_purge(self):
-        print('Starting default channel purge 24 hour loop')
-        await self.bot.wait_until_ready()
+        await self.bot.wait_until_ready()        
+        print('Starting default channel purge 24 hour loop')        
         self.guild = discord.utils.get(self.bot.guilds, name=GUILD)
         self.ch_welcome = self.guild.get_channel(WELCOME_CHANNEL_ID)
         if self.ch_welcome is None:
