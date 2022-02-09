@@ -1,4 +1,5 @@
 from discord.ext import commands
+from datetime import datetime, timedelta
 import discord
 
 
@@ -56,3 +57,39 @@ class Utility(commands.Cog):
         await ctx.send(f'Websocket closed: {self.bot.is_closed()}\n'
                        f'Internal cache ready: {self.bot.is_ready()}\n'
                        f'Websocket rate limited: {self.bot.is_ws_ratelimited()}')
+
+    @commands.command(hidden=True)
+    @commands.has_permissions(administrator=True)
+    async def purge(self, ctx, before: int, after: int = None):
+        del_before = datetime.now() - timedelta(days=before)
+        if after is None:
+            await ctx.send(f'Deleting messages sent before {del_before.isoformat(" ", "minutes")}')
+            deleted = await ctx.channel.purge(before=del_before)
+        else:
+            if after <= before:
+                await ctx.send('Bad argument, second given integer must be larger than the first.')
+                return
+            del_after = del_before - timedelta(days=after - before)
+            await ctx.send(f'Deleting messages between {del_after.isoformat(" ", "minutes")} '
+                           f'and {del_before.isoformat(" ", "minutes")}.')
+            deleted = await ctx.channel.purge(before=del_before, after=del_after)
+        await ctx.send(f'Successfully deleted {len(deleted)} messages from this channel!')
+    
+    @purge.error
+    async def purge_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingPermissions):
+            print(f'$purge command failed: User {ctx.author.name} lacks permissions')
+        elif isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.send('You must include an integer with this command.\n'
+                           'Example: $purge 3\n'
+                           'That command will delete all messages older than 3 days.\n\n'
+                           'Alternatively, you can include two integers to declare a range.\n'
+                           'Example: $purge 3 42\n'
+                           'That command will delete all messages older than 3 days, '
+                           'but not older than 42 days.\n\n')
+        elif isinstance(error, commands.errors.BadArgument):
+            await ctx.send('Bad argument, please only use integers with this command.\n')
+        else:
+            print(f'$purge command failed with error:\n\n{error}')
+
+
