@@ -25,6 +25,9 @@ class Random(commands.Cog):
             await ctx.send('You must include at least 1 integer to serve as an upper bound\n'
                            'Example: $number 42\n\n'
                            'Please use *$help number* for more information.')
+        elif isinstance(error, commands.errors.BadArgument):
+            await ctx.send('Bad argument, use only integers with this command.\n\n'
+                           'Please use *$help number* for more information.')
         else:
             print(f'$number command failed with error:\n\n{error}')
 
