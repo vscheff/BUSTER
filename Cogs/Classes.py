@@ -30,7 +30,7 @@ class Classes(commands.Cog):
         if major.upper() in major_abbrev:
             major = major_abbrev[major.upper()].lower()
         elif major not in self.major_list:
-            if major:
+            if major and major != 'list':
                 await ctx.send('Invalid major! Please be sure to type your major exactly as it appears.\n')
             await ctx.send(content='Supported majors include:',
                            file=discord.File('./message.txt', filename='Majors.txt'))
@@ -120,12 +120,16 @@ class Classes(commands.Cog):
 
     @commands.command(help='Leave the text channel for a specified class.\nExample: $leave CS1120\n\n'
                            'You may also leave several classes at once by using a comma-separated list.\n'
-                           'Example: $leave cs1120, math 2240, PHYS-2130',
+                           'Example: $leave cs1120, math 2240, PHYS-2130\n\n'
+                           'To leave all joined text channels use argument "all":\nExample: $leave all',
                       brief='Leave the text channel for a specified class.')
     async def leave(self, ctx, *, arg):
         arg = arg.strip().lower()
         if arg == 'help':
             await ctx.send(self.leave.help)
+            return
+        if arg == 'all':
+            await self.leave_all(ctx)
             return
         guild = discord.utils.get(self.bot.guilds, name=GUILD)
         successful_leaves = []
@@ -157,6 +161,18 @@ class Classes(commands.Cog):
                            'Please use *$help leave* for more information.')
         else:
             print(f'$leave command failed with error:\n\n{error}')
+
+    async def leave_all(self, ctx):
+        guild = discord.utils.get(self.bot.guilds, name=GUILD)
+        channels_left = []
+        for channel in guild.text_channels:
+            if not channel.overwrites_for(ctx.author).is_empty():
+                await channel.set_permissions(ctx.author, overwrite=None)
+                channels_left.append(channel.name)
+        if channels_left:
+            await ctx.send(f'Successfully left text channels for: {", ".join(channels_left)}')
+        else:
+            await ctx.send("No text channels left. Are you sure you're a member of any?")
     
     @commands.command(hidden=True)
     @commands.has_permissions(manage_roles=True)
