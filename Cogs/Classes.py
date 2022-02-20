@@ -27,14 +27,14 @@ class Classes(commands.Cog):
         if major == 'help':
             await ctx.send(self.major.help)
             return
-        if major.upper() in major_abbrev:
-            major = major_abbrev[major.upper()].lower()
+        if major in major_abbrev:
+            major = major_abbrev[major].lower()
         elif major not in self.major_list:
             if major and major != 'list':
                 await ctx.send('Invalid major! Please be sure to type your major exactly as it appears.\n')
             await ctx.send(content='Supported majors include:',
                            file=discord.File('./message.txt', filename='Majors.txt'))
-            return        
+            return
         guild = discord.utils.get(self.bot.guilds, name=GUILD)
         roles = await guild.fetch_roles()
         selected_role = [i for i in roles if i.name.lower() == major][0]
@@ -100,14 +100,14 @@ class Classes(commands.Cog):
                 await channel[0].set_permissions(ctx.author, read_messages=True)
             else:
                 print(f'Creating channel {class_name}')
-                channel = await guild.create_text_channel(class_name, 
-                                                          overwrites=overwrites, 
+                channel = await guild.create_text_channel(class_name,
+                                                          overwrites=overwrites,
                                                           category=category)
                 await channel.set_permissions(ctx.author, read_messages=True)
             successful_joins.append(class_name)
         if successful_joins:
             await ctx.send(f'Successfully joined text channels for: {", ".join(successful_joins)}')
-            
+
 
     @join.error
     async def join_error(self, ctx, error):
@@ -173,7 +173,7 @@ class Classes(commands.Cog):
             await ctx.send(f'Successfully left text channels for: {", ".join(channels_left)}')
         else:
             await ctx.send("No text channels left. Are you sure you're a member of any?")
-    
+
     @commands.command(hidden=True)
     @commands.has_permissions(manage_roles=True)
     async def add_roles(self, ctx, filename):
@@ -200,11 +200,10 @@ class Classes(commands.Cog):
                                f'Redundant Roles Skipped: {count_failure}')
         except FileNotFoundError:
             await ctx.send(f'No file in directory found with name: {filename}')
-    
+
     @add_roles.error
     async def add_roles_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingPermissions):
             print(f'$add_roles command failed: User {ctx.author.name} lacks permissions')
         else:
             print(f'$add_roles command failed with error:\n\n{error}')
-
