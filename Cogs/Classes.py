@@ -28,6 +28,8 @@ class Classes(commands.Cog):
                            'For some majors you may also use their abbreviation code\nExample: $major AAAS',
                       brief='Select your major as a server role.')
     async def major(self, ctx, *major):
+        # Name of the defualt role everyone will be added to when they run this command
+        DEFAULT = 'broncos'
         # Lower and join user input, and remove all apostrophes
         major = sub(r"'", '', ' '.join(major)).lower()
         if major == 'help':
@@ -43,10 +45,10 @@ class Classes(commands.Cog):
             await ctx.send(content='Supported majors include:',
                            file=discord.File('./message.txt', filename='Majors.txt'))
             return
-        # Find the role requested by the user
-        selected_role = discord.utils.find(lambda x: x.name.lower() == major, self.guild.roles)
-        await ctx.author.add_roles(selected_role)
-        await ctx.send(f'Success! You are now a member of {selected_role.name}!')
+        # Find the role requested by the user, as well as the default role
+        roles = filter(lambda x: x.name.lower() in (DEFAULT, major), self.guild.roles)
+        await ctx.author.add_roles(*roles)
+        await ctx.send(f'Success! You are now a member of {major.title()}!')
 
     # Used by $join and $leave to validate user input for class names
     # param class_name - one instance of user input for class name
