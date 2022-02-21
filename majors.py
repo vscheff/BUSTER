@@ -1,6 +1,13 @@
 # Contains a mapping of abrreviations and short names, to their respective major
 # This is used by $major to aid with user input interpretation
 
+# Guidelines for adding new key/val pairs:
+#   1. Keys must strictly be lowercase
+#   2. Values are case insensitive, but must strictly be spelled the same as they appear in ./message.txt
+#   3. Do not add an abbreviation that could be reasonably applied to multiple majors
+#   4. Place keys in the list alphabetically
+#   5. One key/val pair per line
+
 major_abbrev = {
 	"aaas": "African American and African Studies",
 	"acty": "Accountancy",
