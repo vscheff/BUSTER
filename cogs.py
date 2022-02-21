@@ -1,10 +1,17 @@
+# Common collection space for all of the bots cogs
+# This file imports the cogs from each file and adds them to the bot
+
+# Local dependencies
 from Cogs.Classes import Classes
 from Cogs.Utility import Utility
 from Cogs.Random import Random
 from Cogs.LoopTasks import LoopTasks
 
-def setup(bot):
-    bot.add_cog(Classes(bot))
+# Adds each cogs to the bot, this is called via bot.load_extension()
+# param   bot - commands.Bot object containing our client
+# param guild - discord.Guild object containing the target server
+def add_cogs(bot, guild):
+    bot.add_cog(Classes(bot, guild))
     bot.add_cog(Random())
     bot.add_cog(Utility(bot))
-    bot.add_cog(LoopTasks(bot))
+    bot.add_cog(LoopTasks(bot, guild))
