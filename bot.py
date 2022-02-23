@@ -23,7 +23,8 @@ bot = commands.Bot(command_prefix='$', help_command=CustomHelpCommand(), intents
 @bot.event
 async def on_ready():
     guild = discord.utils.get(bot.guilds, name=GUILD)
-    add_cogs(bot, guild)
+    if not bot.cogs:
+        add_cogs(bot, guild)
 
     print(f'{bot.user} is connected to the following guild:\n'
           f'{guild.name} (ID: {guild.id})\n'
