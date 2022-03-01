@@ -20,9 +20,13 @@ from help_command import CustomHelpCommand
 bot = commands.Bot(command_prefix='$', help_command=CustomHelpCommand(), intents=discord.Intents.all())
 
 # Runs when bot has successfully logged in
+# Note: This can and will be called multiple times during the bot's up-times
 @bot.event
 async def on_ready():
     guild = discord.utils.get(bot.guilds, name=GUILD)
+
+    # Only add cogs if no cogs are currently present on the bot
+    # This prevents the recurring CommandRegistrationError exception
     if not bot.cogs:
         add_cogs(bot, guild)
 

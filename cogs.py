@@ -7,7 +7,7 @@ from Cogs.Utility import Utility
 from Cogs.Random import Random
 from Cogs.LoopTasks import LoopTasks
 
-# Adds each cogs to the bot, this is called via bot.load_extension()
+# Adds each cogs to the bot, this is called once the bot is ready for the first time
 # param   bot - commands.Bot object containing our client
 # param guild - discord.Guild object containing the target server
 def add_cogs(bot, guild):

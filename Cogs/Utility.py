@@ -2,21 +2,84 @@
 
 from discord.ext import commands
 from datetime import datetime, timedelta
+from PIL import Image
 import discord
+import os
+import qrcode
 
 
 class Utility(commands.Cog):
 
-    # attr bot - our client
+    # attr      bot - our client
+    # attr inv_file - filename/path for storage of inivite link QR image
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.inv_file = './img/qr.png'
 
-    # $invite command used to retrieve invite linke and QR code for the server
+    # $invite command used to retrieve invite link and QR code for the server
     @commands.command(help='Returns an invite link and QR code for inviting new users to the server',
                       brief='Returns an invite link for the server')
     async def invite(self, ctx):
         await ctx.send(content='*Invite link:* https://discord.gg/kfPrgSuHA6\n\n*QR Code:*',
-                       file=discord.File('./qr.png'))
+                       file=discord.File(self.inv_file))
+
+    # $set_invite command used to update and generate the invite link QR image
+    @commands.command(hidden=True)
+    @commands.has_permissions(manage_roles=True)
+    async def set_invite(self, ctx, *, arg):
+        img = self.make_qr(arg)
+        img.save(self.inv_file)
+        if os.path.exists(self.inv_file):
+            await ctx.send('New invite QR code successfully generated.')
+        else:
+            await ctx.send('Error occured. QR code not generated.')
+
+    # Called if $set_invite encounters an unhandled exception
+    @set_invite.error
+    async def set_invite_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingPermissions):
+            print(f'$set_invite command failed: User {ctx.author.name} lacks permissions')
+        elif isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.send('You must include the server invite link with this command.\n'
+                           'Example: $set_invite https://discord.gg/kfPrgSuHA6')
+        else:
+            print(f'$set_invite command failed with error:\n\n{error}')
+
+    # $qr command used to generate QR code images
+    # param arg - all user input following command-name
+    @commands.command(help='Generate a QR code for input data\nExample: $qr gowmu.wmich.edu',
+                      brief='Generate a QR code')
+    async def qr(self, ctx, *, arg):
+        # Filename/path for temporary storage of QR image
+        temp_store = './img/temp_qr.png'
+        img = self.make_qr(arg)
+        img.save(temp_store)
+        if os.path.exists(temp_store):
+            await ctx.send(file=discord.File(temp_store))
+            os.remove(temp_store)
+        else:
+            print('Error occured while generating QR code. Temp file not created/deleted.')
+
+    # Called if $qr encounters an unhandled exception
+    @qr.error
+    async def qr_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingRequiredArgument):
+            await ctx.send('You must include a string of data with this command.\n'
+                           'Example: $qr gowmu.wmich.edu')
+        else:
+            print(f'$qr command failed with error:\n\n{error}')
+
+    # Used by $qr and $set_invite to creat a QR code image
+    # param data - string of data to encode in the QR image
+    def make_qr(self, data):
+        qr = qrcode.QRCode(version=None,                                       # Nonetype allows dynamic QR size
+                           error_correction=qrcode.constants.ERROR_CORRECT_L,  # L <= 7% error correction
+                           box_size=10,
+                           border=2)
+        qr.add_data(data)
+        # Construct the QR code with the 'fit' modifier to scale the input data
+        qr.make(fit=True)
+        return qr.make_image(fill_color='black', back_color='white')
 
     # $ping command used to test bot readiness and latency
     @commands.command(help='Returns "pong" if the bot is online.\nExample: $ping',
