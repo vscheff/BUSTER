@@ -199,7 +199,10 @@ class Classes(commands.Cog):
 
     # Hidden $add_roles command used to bulk add a collection of roles
     # param filename - string representing the filepath for role definition file
-    @commands.command(hidden=True)
+    @commands.command(hidden=True,
+                      help='Add roles from an input file in the master directory\n'
+                           'Example: $add_roles new_roles.txt',
+                      brief='Bulk add roles')
     @commands.has_permissions(manage_roles=True)
     async def add_roles(self, ctx, filename):
         try:

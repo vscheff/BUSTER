@@ -24,7 +24,10 @@ class Utility(commands.Cog):
                        file=discord.File(self.inv_file))
 
     # $set_invite command used to update and generate the invite link QR image
-    @commands.command(hidden=True)
+    @commands.command(hidden=True,
+                      help='Generates and saves a new QR image for the $invite command\n'
+                           'Example: $invite https://discord.gg/kfPrgSuHA6',
+                      brief='Generate a new QR image for $invite')
     @commands.has_permissions(manage_roles=True)
     async def set_invite(self, ctx, *, arg):
         img = self.make_qr(arg)
@@ -125,7 +128,9 @@ class Utility(commands.Cog):
                        f'https://github.com/vscheff/BUSTER')
 
     # $ready command used as a "all-systems-go" check for the bot
-    @commands.command(hidden=True)
+    @commands.command(hidden=True,
+                      help='Performs an "All-Systems-Go" check for the bot, and returns a status report.',
+                      brief='Check for "All-Systems-Go"')
     async def ready(self, ctx):
         await ctx.send(f'Websocket closed: {self.bot.is_closed()}\n'
                        f'Internal cache ready: {self.bot.is_ready()}\n'
@@ -134,7 +139,15 @@ class Utility(commands.Cog):
     # $purge command used to bulk delete messages from a text channel
     # param before - int representing the number of days, before which messages will be deleted
     # param  after - int representing the number of days, before which messages will NOT be deleted
-    @commands.command(hidden=True)
+    @commands.command(hidden=True,
+                      help='Delete all messages in a channel older than a give number of days.\n'
+                           'Example: $purge 3\n'
+                           'That command will delete all messages older than 3 days.\n\n'
+                           'Alternatively, you can include two integers to declare a range.\n'
+                           'Example: $purge 3 42\n'
+                           'That command will delete all messages older than 3 days, '
+                           'but not older than 42 days.\n\n',
+                      brief='Bulk delete messages in current channel')
     @commands.has_permissions(manage_messages=True)
     async def purge(self, ctx, before: int, after: int = None):
         del_before = datetime.now() - timedelta(days=before)
