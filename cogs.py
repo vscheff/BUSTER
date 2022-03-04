@@ -13,9 +13,5 @@ from Cogs.LoopTasks import LoopTasks
 def add_cogs(bot, guild):
     bot.add_cog(Classes(bot, guild))
     bot.add_cog(Random())
-
-    util_cog = Utility(bot)
-    bot.add_cog(util_cog)
-#    bot.help_command.cog = util_cog
-
+    bot.add_cog(Utility(bot))
     bot.add_cog(LoopTasks(bot, guild))
