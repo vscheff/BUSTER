@@ -26,7 +26,7 @@ class Utility(commands.Cog):
     # $set_invite command used to update and generate the invite link QR image
     @commands.command(hidden=True,
                       help='Generates and saves a new QR image for the $invite command\n'
-                           'Example: $invite https://discord.gg/kfPrgSuHA6',
+                           'Example: `$invite https://discord.gg/kfPrgSuHA6`',
                       brief='Generate a new QR image for $invite')
     @commands.has_permissions(manage_roles=True)
     async def set_invite(self, ctx, *, arg):
@@ -44,13 +44,13 @@ class Utility(commands.Cog):
             print(f'$set_invite command failed: User {ctx.author.name} lacks permissions')
         elif isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.send('You must include the server invite link with this command.\n'
-                           'Example: $set_invite https://discord.gg/kfPrgSuHA6')
+                           'Example: `$set_invite https://discord.gg/kfPrgSuHA6`')
         else:
             print(f'$set_invite command failed with error:\n\n{error}')
 
     # $qr command used to generate QR code images
     # param arg - all user input following command-name
-    @commands.command(help='Generate a QR code for input data\nExample: $qr gowmu.wmich.edu',
+    @commands.command(help='Generate a QR code for input data\nExample: `$qr gowmu.wmich.edu`',
                       brief='Generate a QR code')
     async def qr(self, ctx, *, arg):
         # Filename/path for temporary storage of QR image
@@ -68,7 +68,7 @@ class Utility(commands.Cog):
     async def qr_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.send('You must include a string of data with this command.\n'
-                           'Example: $qr gowmu.wmich.edu')
+                           'Example: `$qr gowmu.wmich.edu`')
         else:
             print(f'$qr command failed with error:\n\n{error}')
 
@@ -85,17 +85,19 @@ class Utility(commands.Cog):
         return qr.make_image(fill_color='black', back_color='white')
 
     # $ping command used to test bot readiness and latency
-    @commands.command(help='Returns "pong" if the bot is online.\nExample: $ping',
+    @commands.command(help='Returns "pong" and round-trip latency if the bot is online.',
                       brief='Returns "pong" if the bot is online.')
     async def ping(self, ctx):
         await ctx.send(f'pong (*{round(self.bot.latency * 1000)}ms*)')
 
     # $execute command used for ACE
     # param arg - all user input following the command-name
-    @commands.command(help='Attempts to execute the given code in Python\n'
+    @commands.command(hidden=True,
+                      help='Attempts to execute the given code in Python\n'
                            'This command will only accept one-line statements\n'
-                           'Example: $execute 6 * 7',
+                           'Example: `$execute 6 * 7`',
                       brief='Executes given Python code')
+    @commands.has_permissions(administrator=True)
     async def execute(self, ctx, *, arg):
         try:
             compiled = compile(arg, '<string>', 'eval')
@@ -136,15 +138,55 @@ class Utility(commands.Cog):
                        f'Internal cache ready: {self.bot.is_ready()}\n'
                        f'Websocket rate limited: {self.bot.is_ws_ratelimited()}')
 
+    # Hidden $add_roles command used to bulk add a collection of roles
+    # param filename - string representing the filepath for role definition file
+    @commands.command(hidden=True,
+                      help='Add roles from an input file in the master directory\n'
+                           'Example: `$add_roles new_roles.txt`',
+                      brief='Bulk add roles')
+    @commands.has_permissions(manage_roles=True)
+    async def add_roles(self, ctx, filename):
+        try:
+            with open(filename, 'r') as inFile:
+                # A list of the names of all existing roles
+                role_names = [i.name for i in self.guild.roles]
+                # This will be the role color of all added roles
+                color = discord.Colour.orange()
+                count_success = 0
+                count_failure = 0
+                await ctx.send('Beginning bulk role creation...')
+                for line in inFile:
+                    name = line.strip()
+                    if name not in role_names:
+                        print(f'Creating role {count_success}: {name}')
+                        await self.guild.create_role(name=name, colour=color)
+                        count_success += 1
+                    else:
+                        print('Skipping redundant role: {name}')
+                        count_failure += 1
+                await ctx.send(f'Operation complete\n'
+                               f'Total Roles Added: {count_success}\n'
+                               f'Redundant Roles Skipped: {count_failure}')
+        except FileNotFoundError:
+            await ctx.send(f'No file in directory found with name: {filename}')
+
+    # Called if $add_roles encounters an unhandled exception
+    @add_roles.error
+    async def add_roles_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingPermissions):
+            print(f'$add_roles command failed: User {ctx.author.name} lacks permissions')
+        else:
+            print(f'$add_roles command failed with error:\n\n{error}')
+
     # $purge command used to bulk delete messages from a text channel
     # param before - int representing the number of days, before which messages will be deleted
     # param  after - int representing the number of days, before which messages will NOT be deleted
     @commands.command(hidden=True,
                       help='Delete all messages in a channel older than a give number of days.\n'
-                           'Example: $purge 3\n'
+                           'Example: `$purge 3`\n'
                            'That command will delete all messages older than 3 days.\n\n'
                            'Alternatively, you can include two integers to declare a range.\n'
-                           'Example: $purge 3 42\n'
+                           'Example: `$purge 3 42`\n'
                            'That command will delete all messages older than 3 days, '
                            'but not older than 42 days.\n\n',
                       brief='Bulk delete messages in current channel')
@@ -172,13 +214,12 @@ class Utility(commands.Cog):
             print(f'$purge command failed: User {ctx.author.name} lacks permissions')
         elif isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.send('You must include an integer with this command.\n'
-                           'Example: $purge 3\n'
-                           'That command will delete all messages older than 3 days.\n\n'
-                           'Alternatively, you can include two integers to declare a range.\n'
-                           'Example: $purge 3 42\n'
-                           'That command will delete all messages older than 3 days, '
-                           'but not older than 42 days.\n\n')
+                           'Please use `$help purge` for more information.')
         elif isinstance(error, commands.errors.BadArgument):
             await ctx.send('Bad argument, please only use integers with this command.\n')
         else:
             print(f'$purge command failed with error:\n\n{error}')
+
+    async def newboard(self, ctx):
+        await ctx.send("01010110 01101111 01101110
+                        00100000 01010011 01100011 01101000 01100101 01100110 01100110 01101100 01100101 01110010")
