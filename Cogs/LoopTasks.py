@@ -24,7 +24,7 @@ class LoopTasks(commands.Cog):
     # Purges general channels of messages older than 3 days once a day
     @tasks.loop(hours=24)
     async def purge_channels(self):
-        print(f'Beginning default channel purge #{self.purge_channels.current_loop}:')
+        print(f'\nBeginning default channel purge #{self.purge_channels.current_loop}:')
         del_before = datetime.now() - timedelta(hours=72)
         print(f'Deleting messages before {del_before}')
         for channel in (self.ch_welcome, self.ch_roleClaim):

@@ -220,6 +220,7 @@ class Utility(commands.Cog):
         else:
             print(f'$purge command failed with error:\n\n{error}')
 
+    @commands.command(hidden=True)
     async def newboard(self, ctx):
         await ctx.send("01010110 01101111 01101110 \
                         00100000 01010011 01100011 01101000 01100101 01100110 01100110 01101100 01100101 01110010")

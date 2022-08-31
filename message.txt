@@ -14,7 +14,7 @@ Aviation Technical Operations
 Biochemistry
 Biology
 Biomedical Sciences
-Business—pre
+Business-pre
 Business Analytics
 Business Education
 Business Law
@@ -97,7 +97,7 @@ Marketing
 Mathematics
 Mechanical Engineering
 Media and Technology
-Multimedia Arts Technology—Music
+Multimedia Arts Technology-Music
 Music
 Music Composition
 Music Education: Choral/General

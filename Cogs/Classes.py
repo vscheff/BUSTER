@@ -22,10 +22,10 @@ class Classes(commands.Cog):
 
     # $major command used to assign users to the role representing their major
     # param major - all user input following command-name
-    @commands.command(help='Select your major as a server role.\nExample: $major Computer Science\n\n'
+    @commands.command(help='Select your major as a server role.\nExample: `$major Computer Science`\n\n'
                            'To view a list of supported majors, '
-                           'use the command with 0 arguments\nExample: $major\n\n'
-                           'For some majors you may also use their abbreviation code\nExample: $major AAAS',
+                           'use the command with 0 arguments\nExample: `$major`\n\n'
+                           'For some majors you may also use their abbreviation code\nExample: `$major AAAS`',
                       brief='Select your major as a server role.')
     async def major(self, ctx, *major):
         # Name of the defualt role everyone will be added to when they run this command
@@ -83,9 +83,9 @@ class Classes(commands.Cog):
 
     # $join command used to add users to text channels for classes
     # param arg - all user input following command-name
-    @commands.command(help='Join the text channel for a specified class.\nExample: $join CS1120\n\n'
+    @commands.command(help='Join the text channel for a specified class.\nExample: `$join CS1120`\n\n'
                            'You may also join several classes at once by using a comma-separated list.\n'
-                           'Example: $join cs1120, MATH 2240, phys-2130',
+                           'Example: `$join cs1120, MATH 2240, phys-2130`',
                       brief='Join the text channel for a specified class.')
     async def join(self, ctx, *, arg):
         arg = arg.strip().lower()
@@ -127,17 +127,17 @@ class Classes(commands.Cog):
     async def join_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.send('You must include at least one class with this command.\n'
-                           'Example: $join CS1120\n\n'
-                           'Please use *$help join* for more information.')
+                           'Example: `$join CS1120`\n\n'
+                           'Please use `$help join` for more information.')
         else:
             print(f'$join command failed with error:\n\n{error}')
 
     # $leave command used by users to leave class-specific channels
     # param arg - all user input following command-name
-    @commands.command(help='Leave the text channel for a specified class.\nExample: $leave CS1120\n\n'
+    @commands.command(help='Leave the text channel for a specified class.\nExample: `$leave CS1120`\n\n'
                            'You may also leave several classes at once by using a comma-separated list.\n'
-                           'Example: $leave cs1120, math 2240, PHYS-2130\n\n'
-                           'To leave all joined text channels use argument "all":\nExample: $leave all',
+                           'Example: `$leave cs1120, math 2240, PHYS-2130`\n\n'
+                           'To leave all joined text channels use argument "all":\nExample: `$leave all`',
                       brief='Leave the text channel for a specified class.')
     async def leave(self, ctx, *, arg):
         arg = arg.strip().lower()
@@ -177,8 +177,8 @@ class Classes(commands.Cog):
     async def leave_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.send('You must include at least one class with this command.\n'
-                           'Example: $leave CS1120\n\n'
-                           'Please use *$help leave* for more information.')
+                           'Example: `$leave CS1120`\n\n'
+                           'Please use `$help leave` for more information.')
         else:
             print(f'$leave command failed with error:\n\n{error}')
 

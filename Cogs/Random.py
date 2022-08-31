@@ -8,17 +8,17 @@ from random import choice, randint
 class Random(commands.Cog):
 
     # $flip command sends either "heads" or "tails" in the channel
-    @commands.command(help='Returns either "heads" or "tails"\nExample: $flip',
+    @commands.command(help='Returns either "heads" or "tails"\n`Example: $flip`',
                       brief='Returns either "heads" or "tails"')
     async def flip(self, ctx):
         await ctx.send(choice(('heads', 'tails')))
 
     # $number command used to generate a random integer within a given range
     @commands.command(help='Returns a randomly chosen number between two given integers\n'
-                           'Example: $number 1 10\n\n'
+                           'Example: `$number 1 10`\n\n'
                            'If only one integer is given, '
                            'then a number between 1 and that integer will be chosen\n'
-                           'Example: $number 1 10',
+                           'Example: `$number 10`',
                       brief='Returns a random number')
     async def number(self, ctx, lower: int, upper: int = None):
         if upper is None:
@@ -30,11 +30,11 @@ class Random(commands.Cog):
     async def number_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.send('You must include at least 1 integer to serve as an upper bound\n'
-                           'Example: $number 42\n\n'
-                           'Please use *$help number* for more information.')
+                           'Example: `$number 42`\n\n'
+                           'Please use `$help number` for more information.')
         elif isinstance(error, commands.errors.BadArgument):
             await ctx.send('Bad argument, use only integers with this command.\n\n'
-                           'Please use *$help number* for more information.')
+                           'Please use `$help number` for more information.')
         else:
             print(f'$number command failed with error:\n\n{error}')
 
@@ -42,7 +42,7 @@ class Random(commands.Cog):
     # param arg - all user input following command-name
     @commands.command(help='Returns 1 chosen item from a given list\n'
                            'The list can be of any size, with each item seperated by a comma\n'
-                           'Example: $choice Captain Kirk, Captain Picard, Admiral Adama',
+                           'Example: `$choice Captain Kirk, Captain Picard, Admiral Adama`',
                       brief='Returns 1 randomly chosen item')
     async def choice(self, ctx, *, arg):
         await ctx.send(choice([item.strip() for item in arg.split(',') if item]))
@@ -52,8 +52,8 @@ class Random(commands.Cog):
     async def choice_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingRequiredArgument):
             await ctx.send('You must include a comma-seperated list of items.\n'
-                           'Example: $choice me, myself, I\n\n'
-                           'Please use *$help choice* for more information.')
+                           'Example: `$choice me, myself, I`\n\n'
+                           'Please use `$help choice` for more information.')
         else:
             print(f'$choice command failed with error:\n\n{error}')
 
@@ -62,7 +62,7 @@ class Random(commands.Cog):
     @commands.command(help='Rolls any number of n-sided dice in the classic "xDn format\n'
                            'Where *x* is the quantity of dice being rolled, '
                            'and *n* is the number of sides on the die\n'
-                           'Example: $roll 3d20',
+                           'Example: `$roll 3d20`',
                       brief='Rolls dice in the classic "xDn" format')
     async def roll(self, ctx, dice):
         try:
