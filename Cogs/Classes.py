@@ -7,6 +7,10 @@ import discord
 # Local dependencies
 from majors import major_abbrev
 
+NO_LEAVE = [930302044336709672,     # Admin Stuff
+            930270280562114582,     # Information
+           ]
+
 
 class Classes(commands.Cog):
 
@@ -187,8 +191,9 @@ class Classes(commands.Cog):
     # param ctx - message context forwarded from $leave
     async def leave_all(self, ctx):
         channels_left = []
+        member_of = filter(lambda x: not x.overwrites_for(ctx.author).is_empty(), self.guild.text_channels)
         # Loop once for each text channel for which the user has permission overwrite(s)
-        for channel in filter(lambda x: not x.overwrites_for(ctx.author).is_empty(), self.guild.text_channels):
+        for channel in filter(lambda x: NO_LEAVE.count(x.category_id) > 0, member_of):
             # Clear all of the user's overwrites for this channel
             await channel.set_permissions(ctx.author, overwrite=None)
             channels_left.append(channel.name)

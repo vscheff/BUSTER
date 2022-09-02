@@ -9,6 +9,7 @@ import qrcode
 
 from msg_packager import package_message
 
+
 class Utility(commands.Cog):
 
     # attr      bot - our client
@@ -222,6 +223,13 @@ class Utility(commands.Cog):
                        f"Created On: {chn.created_at}\n"
                        f"NSFW: {chn.nsfw}\n"
                        f"Permissions Synced: {chn.permissions_synced}\n")
+
+    @channel_info.error
+    async def channal_info_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingPermissions):
+            print(f'$purge command failed: User {ctx.author.name} lacks permissions')
+        else:
+            print(f'$purge command failed with error:\n\n{error}')
 
     @commands.command(hidden=True)
     async def newboard(self, ctx):
