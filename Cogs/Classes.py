@@ -193,7 +193,7 @@ class Classes(commands.Cog):
         channels_left = []
         member_of = filter(lambda x: not x.overwrites_for(ctx.author).is_empty(), self.guild.text_channels)
         # Loop once for each text channel for which the user has permission overwrite(s)
-        for channel in filter(lambda x: NO_LEAVE.count(x.category_id) > 0, member_of):
+        for channel in filter(lambda x: NO_LEAVE.count(x.category_id) == 0, member_of):
             # Clear all of the user's overwrites for this channel
             await channel.set_permissions(ctx.author, overwrite=None)
             channels_left.append(channel.name)
