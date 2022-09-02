@@ -211,6 +211,18 @@ class Utility(commands.Cog):
         else:
             print(f'$purge command failed with error:\n\n{error}')
 
+    @commands.command(hidden=True,
+                     help="Retrieve detailed information about the current channel.",
+                     brief="Retrieve channel information")
+    @commands.has_permissions(manage_channels=True)
+    async def channel_info(self, ctx):
+        chn = ctx.channel
+        await ctx.send(f"**You are currently in {chn.name} (ID: {chn.id})**\n"
+                       f"Category: {chn.category} (ID: {chn.category_id})\n"
+                       f"Created On: {chn.created_at}\n"
+                       f"NSFW: {chn.nsfw}\n"
+                       f"Permissions Synced: {chn.permissions_synced}\n")
+
     @commands.command(hidden=True)
     async def newboard(self, ctx):
         await ctx.send("01010110 01101111 01101110 \
