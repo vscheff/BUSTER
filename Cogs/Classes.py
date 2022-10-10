@@ -53,6 +53,11 @@ class Classes(commands.Cog):
         roles = filter(lambda x: x.name.lower() in (DEFAULT, major), self.guild.roles)
         await ctx.author.add_roles(*roles)
         await ctx.send(f'Success! You are now a member of {major.title()}!')
+    
+    @major.error
+    async def major_error(self, ctx, error):
+        print(f"$major command failed with error: \n\n{error}\n\n"
+               "Triggered by {ctx.author.name} with command {ctx.message.content}")
 
     # Used by $join and $leave to validate user input for class names
     # param class_name - one instance of user input for class name
