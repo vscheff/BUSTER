@@ -67,27 +67,29 @@ class Classes(commands.Cog):
         if match is None:
             await ctx.send(f'Unrecognized course name: {class_name}\nPlease include a valid department prefix.')
             return
-        else:
-            department = match.group().lower()
-            # Pull the rest of the argument that was not matched
-            class_number = class_name[match.span()[1]:]
+        
+        department = match.group().lower()
+        # Pull the rest of the argument that was not matched
+        class_number = class_name[match.span()[1]:]
 
         try:
             class_int = int(class_number)
-            # Class numbers at WMU are strictly in this range
-            if class_int < 1000 or class_int > 8000:
-                print(f'Bad range for class number: {class_int}')
-                await ctx.send(f'Invalid class number: {class_name}')
-                return
         except ValueError:
             print(f'Caught ValueError on class number: {class_number}')
             await ctx.send(f'Invalid class number: {class_name}')
             return
-        dep_length = len(department)
+
+        # Class numbers at WMU are strictly in this range
+        if class_int < 1000 or class_int > 8000:
+            print(f'Bad range for class number: {class_int}')
+            await ctx.send(f'Invalid class number: {class_name}')
+            return
+
         # Department names are strictly 2, 3, or 4 letters
-        if not 1 < dep_length < 5:
+        if not 1 < len(department) < 5:
             await ctx.send(f'Invalid department prefix: {department}')
             return
+        
         return department, class_number
 
     # $join command used to add users to text channels for classes
@@ -101,7 +103,11 @@ class Classes(commands.Cog):
         if arg == 'help':
             await ctx.send(self.join.help)
             return
+        
+        # Used when creating categories and channels to hide them from users by default
+        o_writes = {self.guild.default_role: discord.PermissionOverwrite(read_messages=False)}
         successful_joins = []
+
         for element in arg.split(','):
             # Remove all whitespace and hyphens from the argument
             class_name = sub(r'[\s\-]', '', element)
@@ -112,8 +118,6 @@ class Classes(commands.Cog):
             department, class_number = class_info
             # Get the category for the department of this class
             category = discord.utils.get(self.guild.categories, name=department)
-            # Used when creating categories and channels to hide them from users by default
-            o_writes = {self.guild.default_role: discord.PermissionOverwrite(read_messages=False)}
             if category is None:
                 print(f'Creating category {department}')
                 category = await self.guild.create_category(department, overwrites=o_writes)
