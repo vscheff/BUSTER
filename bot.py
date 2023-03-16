@@ -33,6 +33,8 @@ async def on_ready():
     print(f'{bot.user} is connected to the following guild:\n'
           f'{guild.name} (ID: {guild.id})\n'
           f'Guild Members: {len(guild.members)}\n')
+    await bot.change_presence(activity=discord.Game(name='$help'))
+
 
 # Begin the bot's event loop
 bot.run(TOKEN)
