@@ -17,7 +17,10 @@ if TOKEN is None or GUILD is None:
 from cogs import add_cogs
 from help_command import CustomHelpCommand
 
-bot = commands.Bot(command_prefix='$', help_command=CustomHelpCommand(), intents=discord.Intents.all())
+bot = commands.Bot(command_prefix='$', help_command=CustomHelpCommand(), intents=discord.Intents.all(),
+                   case_insensitive=True, activity=discord.Activity(type=discord.ActivityType.watching,
+                                                                    name="over the server - awaiting $help"))
+
 
 # Runs when bot has successfully logged in
 # Note: This can and will be called multiple times during the bot's up-time
@@ -33,7 +36,6 @@ async def on_ready():
     print(f'{bot.user} is connected to the following guild:\n'
           f'{guild.name} (ID: {guild.id})\n'
           f'Guild Members: {len(guild.members)}\n')
-    await bot.change_presence(activity=discord.Game(name='$help'))
 
 
 # Begin the bot's event loop
