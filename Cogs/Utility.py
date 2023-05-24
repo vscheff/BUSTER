@@ -111,6 +111,14 @@ class Utility(commands.Cog):
         except Exception as e:
             await ctx.send(str(e))
 
+    # Called if $execute encounters an unhandled exception
+    @execute.error
+    async def execute_error(self, ctx, error):
+        if isinstance(error, commands.errors.MissingPermissions):
+            print(f'$execute command failed: User {ctx.author.name} lacks permissions\n')
+        else:
+            print(f'$execute command failed with error:\n\n{error}')
+
     # $info command used to provide some info on this bot
     @commands.command(help='Provides a brief synopsis of BUSTER, including a link to his Open Source code',
                       brief='Provides a brief synopsis of BUSTER')
@@ -166,7 +174,7 @@ class Utility(commands.Cog):
     @add_roles.error
     async def add_roles_error(self, ctx, error):
         if isinstance(error, commands.errors.MissingPermissions):
-            print(f'$add_roles command failed: User {ctx.author.name} lacks permissions')
+            print(f'$add_roles command failed: User {ctx.author.name} lacks permissions\n')
         else:
             print(f'$add_roles command failed with error:\n\n{error}')
 
